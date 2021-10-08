@@ -30,13 +30,17 @@ enum custom_keycodes {
 enum unicode_names {
     THUMB,
     B,
-    XD
+    XD,
+    ANGRY,
+    HMM
 };
 
 const uint32_t PROGMEM unicode_map[] = {
     [THUMB]  = 0x1F44D, // 👍
     [B] = 0x1F171, // 🅱️
-    [XD] = 0x1F606 // 😆
+    [XD] = 0x1F602, // 😂
+    [ANGRY] = 0x1F621, // 😡
+    [HMM] = 0x1F914 // 🤔
 };
 
 
@@ -84,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT( \
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                     KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12, \
   _______, _______, _______, _______, _______, X(THUMB),                   _______, _______, _______,_______, KC_LBRC, KC_RBRC,\
-  KC_LSFT, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                   KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD, \
+  KC_LSFT, X(ANGRY), KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                   X(HMM), KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD, \
   KC_LCTRL, _______, X(XD), _______, _______, X(B), _______, _______, XXXXXXX, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, \
                              _______, _______, _______, _______, _______,  _______, _______, _______\
 ),
