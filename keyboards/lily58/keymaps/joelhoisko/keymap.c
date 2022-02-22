@@ -32,7 +32,8 @@ enum unicode_names {
     B,
     XD,
     ANGRY,
-    HMM
+    HMM,
+    HAPPY
 };
 
 const uint32_t PROGMEM unicode_map[] = {
@@ -40,9 +41,9 @@ const uint32_t PROGMEM unicode_map[] = {
     [B] = 0x1F171, // 🅱️
     [XD] = 0x1F602, // 😂
     [ANGRY] = 0x1F621, // 😡
-    [HMM] = 0x1F914 // 🤔
+    [HMM] = 0x1F914, // 🤔
+    [HAPPY] = 0x1F60A // 😊
 };
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -87,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_LOWER] = LAYOUT( \
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                     KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12, \
-  _______, _______, _______, _______, _______, X(THUMB),                   _______, _______, _______,_______, KC_LBRC, KC_RBRC,\
+  _______, _______, _______, X(HAPPY), _______, X(THUMB),                   _______, _______, _______,_______, KC_LBRC, KC_RBRC,\
   KC_LSFT, X(ANGRY), KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                   X(HMM), KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD, \
   KC_LCTRL, _______, X(XD), _______, _______, X(B), _______, _______, XXXXXXX, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, \
                              _______, _______, _______, _______, _______,  _______, _______, _______\
@@ -240,6 +241,9 @@ void oled_task_user(void) {
 }
 #endif // OLED_DRIVER_ENABLE
 
+// Initialize variable holding the binary
+// representation of active modifiers.
+uint8_t mod_state;
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
 #ifdef OLED_DRIVER_ENABLE
@@ -247,6 +251,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
     // set_timelog();
   }
+  // Store the current modifier state in the variable for later reference
+  mod_state = get_mods();
 
   switch (keycode) {
     case QWERTY:
@@ -283,6 +289,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
         break;
+    case KC_BSPC:
+        {
+        // Initialize a boolean variable that keeps track
+        // of the delete key status: registered or not?
+        static bool delkey_registered;
+        if (record->event.pressed) {
+            // Detect the activation of either shift keys
+            if (mod_state & MOD_MASK_SHIFT) {
+                // First temporarily canceling both shifts so that
+                // shift isn't applied to the KC_DEL keycode
+                del_mods(MOD_MASK_SHIFT);
+                register_code(KC_DEL);
+                // Update the boolean variable to reflect the status of KC_DEL
+                delkey_registered = true;
+                // Reapplying modifier state so that the held shift key(s)
+                // still work even after having tapped the Backspace/Delete key.
+                set_mods(mod_state);
+                return false;
+            }
+        } else { // on release of KC_BSPC
+            // In case KC_DEL is still being sent even after the release of KC_BSPC
+            if (delkey_registered) {
+                unregister_code(KC_DEL);
+                delkey_registered = false;
+                return false;
+            }
+        }
+        // Let QMK process the KC_BSPC keycode as usual outside of shift
+        return true;
+    }
   }
   return true;
 }
