@@ -36,10 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM_PER_KEY
 
 #undef RGBLED_NUM
-// #define RGBLIGHT_ANIMATIONS
+#define RGBLIGHT_ANIMATIONS
 // #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-#define RGBLIGHT_EFFECT_KNIGHT
-#define RGBLIGHT_EFFECT_BREATHING
+// #define RGBLIGHT_EFFECT_BREATHING
+#define RGBLIGHT_EFFECT_RAINBOW
+// #define RGBLIGHT_EFFECT_KNIGHT
+#define RGBLIGHT_EFFECT_SWIRL
+#define RGBLIGHT_EFFECT_XMAS
 #define RGBLIGHT_LIMIT_VAL 120
 #define RGBLIGHT_HUE_STEP 10
 #define RGBLIGHT_SAT_STEP 17
@@ -58,3 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Uncomment this if you use an ALPS EC11K encoder, or are noticing missing encoder actuations
 // #define ENCODER_RESOLUTION 2
+
+// saving space with the EXTRAFLAGS += -flto option in rules.mk
+#define NO_ACTION_MACRO
+#define NO_ACTION_FUNCTION
